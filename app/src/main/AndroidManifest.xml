@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/esms_app_logo"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/esms_app_logo_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Esms">
+        <activity
+            android:name=".views.lock.LockActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".views.setup.SetupActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".views.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Esms.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".views.main.MainActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

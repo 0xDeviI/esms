@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Esms" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/black</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="colorSurface">@color/colorSurface</item>
+
+    </style>
+
+    <style name="ToolbarTitleText" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+
+    <style name="Theme.Esms" parent="Base.Theme.Esms" />
+
+    <style name="Theme.Esms.Splash.Base" parent="Theme.SplashScreen">
+
+    </style>
+
+</resources>
