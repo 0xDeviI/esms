@@ -43,22 +43,34 @@ public class LockActivity extends AppCompatActivity {
         });
 
         session = new SessionManager(this);
+        currentFails = session.getInt("current_fails");
+        currentFails = currentFails == -1 ? 0 : currentFails;
 
-        if (session.getBoolean("is_restricted") && new Date().getTime() < session.getLong("restricted_until")) {
-            binding.txtPasscodeContainer.setVisibility(GONE);
-            binding.txtLockMessage.setText("Your access to eSMS has been restricted due to numerous failed login attempts. Try again later.");
-            startUnlockingWatchdog();
+        if (session.getBoolean("is_restricted")) {
+            if (new Date().getTime() < session.getLong("restricted_until")) {
+                binding.txtPasscodeContainer.setVisibility(GONE);
+                binding.txtLockMessage.setText("Your access to eSMS has been restricted due to numerous failed login attempts. Try again later.");
+                startUnlockingWatchdog();
+            }
+            else {
+                binding.txtPasscodeContainer.setVisibility(VISIBLE);
+                binding.txtLockMessage.setText("Enter the passcode to unlock eSMS.");
+                currentFails = 0;
+                session.setInt("current_fails", -1);
+            }
         }
 
         binding.txtPasscodeContainer.setEndIconOnClickListener(v -> {
             if (binding.txtPasscode.getText().toString().equals(session.getString("passcode"))) {
+                session.setInt("current_fails", -1);
                 startActivity(new Intent(LockActivity.this, MainActivity.class));
                 finish();
             }
             else {
-                if (MAX_FAILS - (++currentFails) != 0)
-                    Snackbar.make(binding.getRoot(), "Password is incorrect.\nRemaining login attempts: " + (MAX_FAILS - currentFails), Snackbar.LENGTH_LONG).show();
+                if ((MAX_FAILS - (++currentFails) > 0))
+                    Snackbar.make(binding.getRoot(), "Password is incorrect. Remaining login attempts: " + (MAX_FAILS - currentFails), Snackbar.LENGTH_LONG).show();
                 binding.txtPasscode.getText().clear();
+                session.setInt("current_fails", currentFails);
                 if (currentFails == MAX_FAILS) {
                     session.setBoolean("is_restricted", true);
                     session.setLong("restricted_until", new Date().getTime() + (RESTRICTION_SECONDS * 1000));
@@ -81,8 +93,10 @@ public class LockActivity extends AppCompatActivity {
                     binding.txtLockMessage.setText("Enter the passcode to unlock eSMS.");
                     binding.txtPasscodeContainer.setVisibility(VISIBLE);
                     currentFails = 0;
+                    session.setInt("current_fails", -1);
                 }
-               handler.postDelayed(this, 1000);
+                else
+                    handler.postDelayed(this, 1000);
             }
         }, 1000);
     }

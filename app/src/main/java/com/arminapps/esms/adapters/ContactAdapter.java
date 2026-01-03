@@ -1,22 +1,20 @@
 package com.arminapps.esms.adapters;
 
+import static android.view.View.GONE;
+
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.arminapps.esms.R;
 import com.arminapps.esms.data.models.Contact;
 import com.arminapps.esms.databinding.ContactLayoutBinding;
-import com.arminapps.esms.utils.AvatarColorGenerator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
@@ -46,9 +44,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         Contact contact = contacts.get(position);
 
         String contactName = contact.getName();
-//        holder.binding.avatarText.setBackgroundTintList(
-//                ContextCompat.getColorStateList(context, AvatarColorGenerator.getColorFromName(contactName))
-//        );
         holder.binding.avatarText.setText(String.valueOf(contactName.charAt(0)));
         holder.binding.txtContactName.setText(contactName);
     }

@@ -23,4 +23,7 @@ public interface ContactDAO {
 
     @Query("SELECT * FROM contacts;")
     List<Contact> getContacts();
+
+    @Query("SELECT * FROM CONTACTS WHERE name LIKE :searchQuery OR phoneNumbers LIKE :searchQuery;")
+    List<Contact> searchContact(String searchQuery);
 }

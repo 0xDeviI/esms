@@ -4,6 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity(tableName = "contacts")
 public class Contact {
@@ -20,6 +21,10 @@ public class Contact {
     // Getters and setters
     public void addPhoneNumber(String phone) {
         phoneNumbers.add(phone);
+    }
+
+    public void addPhoneNumbers(List<String> phoneNumbers) {
+        this.phoneNumbers.addAll(phoneNumbers);
     }
 
     public int getId() {

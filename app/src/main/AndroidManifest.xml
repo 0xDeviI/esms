@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -14,13 +14,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Esms">
         <activity
+            android:name=".views.addContact.AddContactActivity"
+            android:exported="false"
+            android:parentActivityName=".views.contacts.ContactsActivity"/>
+        <activity
+            android:name=".views.contacts.ContactsActivity"
+            android:exported="false"
+            android:parentActivityName=".views.main.MainActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".views.lock.LockActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".views.setup.SetupActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".views.SplashActivity"
             android:exported="true"

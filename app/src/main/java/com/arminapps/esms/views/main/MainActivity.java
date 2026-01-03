@@ -1,6 +1,13 @@
 package com.arminapps.esms.views.main;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -13,6 +20,8 @@ import androidx.databinding.DataBindingUtil;
 import com.arminapps.esms.R;
 import com.arminapps.esms.adapters.MainViewPagerAdapter;
 import com.arminapps.esms.databinding.ActivityMainBinding;
+import com.arminapps.esms.views.contacts.ContactsActivity;
+import com.arminapps.esms.views.lock.LockActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -32,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        setSupportActionBar(binding.toolbar);
+
         viewPagerAdapter = new MainViewPagerAdapter(this);
         binding.viewPager.setAdapter(viewPagerAdapter);
 
@@ -41,13 +52,34 @@ public class MainActivity extends AppCompatActivity {
                     tab.setText("Chats");
                     break;
                 case 1:
-                    tab.setText("Contacts");
-                    break;
-                case 2:
                     tab.setText("Settings");
                     break;
             }
         }).attach();
 
+        binding.btnNewChat.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, ContactsActivity.class));
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_lock_app) {
+            startActivity(
+                    new Intent(MainActivity.this, LockActivity.class)
+                    .setFlags(FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_CLEAR_TASK)
+            );
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

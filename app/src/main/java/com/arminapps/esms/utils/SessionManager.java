@@ -37,4 +37,12 @@ public class SessionManager {
     public long getLong(String key) {
         return preferences.getLong(key, -1);
     }
+
+    public void setInt(String key, int value) {
+        preferences.edit().putInt(key, value).apply();
+    }
+
+    public int getInt(String key) {
+        return preferences.getInt(key, -1);
+    }
 }

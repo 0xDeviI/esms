@@ -67,7 +67,7 @@ public class SetupActivity extends AppCompatActivity {
             if (isGranted)
                 importContacts();
             else
-                Snackbar.make(binding.getRoot(), "Enter the passcode.", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(binding.getRoot(), "Contacts auto-import rejected. You may import them later.", Snackbar.LENGTH_LONG).show();
             loading(LoadingStep.FINISHING);
         });
 
@@ -129,5 +129,6 @@ public class SetupActivity extends AppCompatActivity {
                 }
             }).start();
         }
+        session.setBoolean("contacts_imported", true);
     }
 }
