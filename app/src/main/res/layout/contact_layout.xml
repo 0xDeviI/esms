@@ -9,6 +9,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/contact_card"
             android:clickable="true"
             app:cardCornerRadius="0dp"
             app:strokeWidth="0dp"

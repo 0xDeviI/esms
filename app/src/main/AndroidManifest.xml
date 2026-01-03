@@ -14,9 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Esms">
         <activity
+            android:name=".views.chat.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
             android:name=".views.addContact.AddContactActivity"
             android:exported="false"
-            android:parentActivityName=".views.contacts.ContactsActivity"/>
+            android:parentActivityName=".views.contacts.ContactsActivity" />
         <activity
             android:name=".views.contacts.ContactsActivity"
             android:exported="false"

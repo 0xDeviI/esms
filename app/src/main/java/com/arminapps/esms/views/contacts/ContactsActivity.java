@@ -107,7 +107,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     private void loadContacts() {
         database = AppDatabase.getInstance(getApplicationContext());
-        adapter = new ContactAdapter(getApplicationContext(), contacts);
+        adapter = new ContactAdapter(this, contacts);
         binding.contactsRecycler.setLayoutManager(new LinearLayoutManager(
                 getApplicationContext(),
                 LinearLayoutManager.VERTICAL,
