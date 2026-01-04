@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.arminapps.esms.data.models.Contact;
 import com.arminapps.esms.databinding.ContactLayoutBinding;
 import com.arminapps.esms.views.chat.ChatActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.Gson;
 
 import java.util.List;
 

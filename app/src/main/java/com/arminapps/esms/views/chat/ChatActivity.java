@@ -1,21 +1,51 @@
 package com.arminapps.esms.views.chat;
 
+import static android.Manifest.permission.SEND_SMS;
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.arminapps.esms.R;
+import com.arminapps.esms.adapters.ChatMessageAdapter;
+import com.arminapps.esms.data.models.Conversation;
+import com.arminapps.esms.data.models.Message;
 import com.arminapps.esms.databinding.ActivityChatBinding;
+import com.arminapps.esms.views.main.MainActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.Gson;
 
-public class ChatActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class ChatActivity extends AppCompatActivity implements ChatContract.View {
 
     private ActivityChatBinding binding;
+    private ChatPresenter presenter;
+    String name = "";
+    String phoneNumber = "";
+    private List<Message> messages = new ArrayList<>();
+    private ChatMessageAdapter adapter;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+    private Conversation conversation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +54,20 @@ public class ChatActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            Insets imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime());
+
+            int bottomInset = Math.max(systemBars.bottom, imeInsets.bottom);
+
+            v.setPadding(
+                    systemBars.left,
+                    systemBars.top,
+                    systemBars.right,
+                    bottomInset
+            );
+
             return insets;
         });
+
 
         setSupportActionBar(binding.toolbar);
 
@@ -39,19 +80,113 @@ public class ChatActivity extends AppCompatActivity {
             getOnBackPressedDispatcher().onBackPressed();
         });
 
+        presenter = new ChatPresenter(this);
         setup();
-    }
-
-    private void setup() {
-        String name = getIntent().getStringExtra("name");
-        String phoneNumber = getIntent().getStringExtra("phoneNumber");
-        binding.toolbar.setTitle(name);
-        binding.toolbar.setSubtitle(phoneNumber);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.chat_menu, menu);
         return true;
+    }
+
+    @Override
+    public void setup() {
+        boolean conversationLoading = getIntent().getBooleanExtra("conversation_loading", false);
+        String name = getIntent().getStringExtra("name");
+        String phoneNumber = getIntent().getStringExtra("phoneNumber");
+        if (conversationLoading) {
+            int conversationId = getIntent().getIntExtra("conversation_id", -1);
+            conversation = new Conversation(name, phoneNumber);
+            conversation.setId(conversationId);
+        }
+        else {
+            conversation = new Conversation(name, phoneNumber);
+            conversation.setId(-1);
+        }
+        presenter.checkConversationExist(conversation);
+
+
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+
+            }
+            else {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Permission Required")
+                        .setMessage("eSMS requires permission of sending SMS and can't function properly without it.")
+                        .setPositiveButton("Grant Permission", (dialog, which) -> {
+                            requestPermissionLauncher.launch(SEND_SMS);
+                        })
+                        .setNegativeButton("Leave chat", (dialog, which) -> {
+                            startActivity(new Intent(ChatActivity.this, MainActivity.class)
+                                    .setFlags(FLAG_ACTIVITY_CLEAR_TOP));
+                            finish();
+                        })
+                        .setCancelable(false)
+                        .create()
+                        .show();
+            }
+        });
+
+        if (ContextCompat.checkSelfPermission(this, SEND_SMS) != PERMISSION_GRANTED)
+            requestPermissionLauncher.launch(SEND_SMS);
+
+        binding.textInputLayout.setEndIconOnClickListener(v -> sendMessageBtnClickAction());
+
+        adapter = new ChatMessageAdapter(this, messages);
+        binding.chatsRecyclerView.setLayoutManager(new LinearLayoutManager(
+                this,
+                LinearLayoutManager.VERTICAL,
+                false
+        ));
+        binding.chatsRecyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void sendMessageBtnClickAction() {
+        String messageText = binding.txtChatMessage.getText().toString().trim();
+        if (!messageText.isEmpty()) {
+            Message message = new Message(true, messageText, new Date().getTime(), conversation.getId());
+            presenter.sendSMS(conversation, message);
+        }
+    }
+
+    @Override
+    public void setMessages(List<Message> messages) {
+        if (messages.isEmpty()) {
+            binding.viewNoMessage.setVisibility(VISIBLE);
+            binding.chatsRecyclerView.setVisibility(GONE);
+        }
+        else {
+            binding.chatsRecyclerView.setVisibility(VISIBLE);
+            binding.viewNoMessage.setVisibility(GONE);
+            this.messages.clear();
+            this.messages.addAll(messages);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void loadConversation(Conversation conversation) {
+        this.conversation = conversation;
+        binding.toolbar.setTitle(conversation.getName());
+        binding.toolbar.setSubtitle(conversation.getPhoneNumber());
+        presenter.loadMessages(conversation);
+    }
+
+    @Override
+    public void messageSent(Message message) {
+        binding.txtChatMessage.setText("");
+        messages.add(message);
+        adapter.notifyItemInserted(messages.size() - 1);
+        if (messages.isEmpty()) {
+            binding.viewNoMessage.setVisibility(VISIBLE);
+            binding.chatsRecyclerView.setVisibility(GONE);
+        }
+        else {
+            binding.chatsRecyclerView.setVisibility(VISIBLE);
+            binding.viewNoMessage.setVisibility(GONE);
+        }
     }
 }

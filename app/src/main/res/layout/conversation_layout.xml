@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:theme="@style/Theme.Esms"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/contact_card"
+            android:clickable="true"
+            app:cardCornerRadius="0dp"
+            app:strokeWidth="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/contact_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="15sp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/avatar_text"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@drawable/contact_name_avatar_background"
+                        tools:text="D"
+                        android:textColor="@color/white"
+                        android:textSize="25sp"
+                        android:gravity="center"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:gravity="left"
+                            android:id="@+id/txt_contact_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="Dr. James Ruff"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:gravity="left"
+                            android:id="@+id/txt_message"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            tools:text="Hello, World!"
+                            android:maxLines="1"
+                            android:textSize="13sp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/separator"
+                    android:layout_marginLeft="70dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</layout>

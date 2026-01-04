@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:elevation="3dp"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:id="@+id/message_received_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/message_background_received"
+            android:minWidth="120dp"
+            android:minHeight="80dp"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/txt_message_received"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_weight="1"
+                tools:text="Hello, World!"/>
+
+            <TextView
+                android:id="@+id/txt_received_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:textColor="#9B9B9B"
+                android:textSize="11sp"
+                tools:text="2026/01/04-03:17 AM" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:elevation="3dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:id="@+id/message_sent_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/message_background_sent"
+            android:minWidth="120dp"
+            android:minHeight="80dp"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/txt_message_sent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:text="Hello, World!" />
+
+            <TextView
+                android:id="@+id/txt_sent_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray"
+                android:textSize="11sp"
+                tools:text="2026/01/04-03:17 AM" />
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

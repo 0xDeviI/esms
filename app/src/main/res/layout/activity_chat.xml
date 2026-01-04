@@ -8,49 +8,81 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Toolbar -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
-            app:titleTextAppearance="@style/ToolbarTitleText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/white"
+            app:titleTextAppearance="@style/ToolbarTitleText"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
             app:title="Armin A."
             app:subtitle="+98 936 781 4519"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Empty state -->
+        <LinearLayout
+            android:id="@+id/view_no_message"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/text_input_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="How to send eSMS?"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:lineHeight="30dp"
+                android:text="1. Tap on top-right menu.\n2. Set your recipient's security key.\n3. Send your message on eSMS!"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- Chat messages -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chats_recycler_view"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            android:layout_marginBottom="75dp"/>
+            app:layout_constraintBottom_toTopOf="@id/text_input_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Message input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_input_layout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:hint="Message"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chats_recycler_view"
             app:passwordToggleDrawable="@drawable/baseline_send_24"
-            app:passwordToggleEnabled="true">
+            app:passwordToggleEnabled="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txt_chat_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxHeight="150dp" />
+                android:maxHeight="100dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

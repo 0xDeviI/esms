@@ -19,12 +19,19 @@ public class Contact {
     }
 
     // Getters and setters
-    public void addPhoneNumber(String phone) {
-        phoneNumbers.add(phone);
+    public void addPhoneNumber(String phoneNumber) {
+        phoneNumbers.add(getCleanPhoneNumber(phoneNumber));
+    }
+
+    private String getCleanPhoneNumber(String phoneNumber) {
+        return phoneNumber.replace(" ", "")
+                .replace("-", "");
     }
 
     public void addPhoneNumbers(List<String> phoneNumbers) {
-        this.phoneNumbers.addAll(phoneNumbers);
+        phoneNumbers.forEach(phoneNumber -> {
+            this.phoneNumbers.add(getCleanPhoneNumber(phoneNumber));
+        });
     }
 
     public int getId() {

@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface ContactDAO {
     @Insert
-    void insert(Contact contact);
+    long insert(Contact contact);
 
     @Update
     void update(Contact contact);

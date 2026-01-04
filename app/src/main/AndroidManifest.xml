@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
@@ -16,7 +17,7 @@
         <activity
             android:name=".views.chat.ChatActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
         <activity
             android:name=".views.addContact.AddContactActivity"
             android:exported="false"

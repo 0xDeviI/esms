@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -18,21 +19,6 @@ import com.arminapps.esms.data.models.Contact;
 import java.util.ArrayList;
 
 public class ContactHelper {
-
-    // Request permission in your Activity
-    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-
-    public void requestContactPermission(Activity activity) {
-        if (ContextCompat.checkSelfPermission(activity,
-                Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.READ_CONTACTS},
-                    PERMISSIONS_REQUEST_READ_CONTACTS);
-        } else {
-            getContacts(activity);
-        }
-    }
-
     @SuppressLint("Range")
     public ArrayList<Contact> getContacts(Context context) {
         ArrayList<Contact> contactList = new ArrayList<>();
@@ -68,6 +54,8 @@ public class ContactHelper {
                             String phone = phoneCursor.getString(
                                     phoneCursor.getColumnIndex(
                                             ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                            // TODO: fix phone some multi-phone numbers won't insert (Like Mirza..)
                             contact.addPhoneNumber(phone);
                         }
                         phoneCursor.close();

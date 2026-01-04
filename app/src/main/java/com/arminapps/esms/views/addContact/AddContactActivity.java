@@ -145,6 +145,7 @@ public class AddContactActivity extends AppCompatActivity {
                         database.contactDAO().insert(contact);
                         startActivity(new Intent(AddContactActivity.this, ContactsActivity.class)
                                 .setFlags(FLAG_ACTIVITY_CLEAR_TOP));
+                        finish();
                     }
                 }).start();
             }
@@ -157,4 +158,5 @@ public class AddContactActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
