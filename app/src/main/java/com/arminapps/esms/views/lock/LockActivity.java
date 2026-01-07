@@ -30,7 +30,7 @@ public class LockActivity extends AppCompatActivity {
 
     private ActivityLockBinding binding;
     private SessionManager session;
-    private final int RESTRICTION_SECONDS = 20;
+    private final int RESTRICTION_SECONDS = 60 * 5;
     private final int MAX_FAILS = 3;
     private int currentFails = 0;
 
