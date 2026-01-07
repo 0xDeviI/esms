@@ -59,8 +59,8 @@ public class Notification {
 
         // 3. Build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "CHANNEL_ID")
-                .setSmallIcon(R.drawable.esms_e_logo) // Required small icon
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.esms_e_logo))
+                .setSmallIcon(R.drawable.esms_e_logo) // Required small icon
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH) // Set notification priority

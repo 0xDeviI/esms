@@ -1,6 +1,7 @@
 [versions]
 activityVersion = "1.12.2"
 agp = "8.12.3"
+androidDatabaseSqlcipher = "4.5.4"
 core = "3.5.4"
 coreSplashscreen = "1.2.0"
 eventbus = "3.3.1"
@@ -17,10 +18,12 @@ roomTesting = "2.8.4"
 roomCompiler = "2.8.4"
 securityCrypto = "1.1.0"
 preference = "1.2.1"
+sqlite = "2.6.2"
 zxingAndroidEmbedded = "4.3.0"
 
 [libraries]
 activity-v1122 = { module = "androidx.activity:activity", version.ref = "activityVersion" }
+android-database-sqlcipher = { module = "net.zetetic:android-database-sqlcipher", version.ref = "androidDatabaseSqlcipher" }
 core = { module = "com.google.zxing:core", version.ref = "core" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 eventbus = { module = "org.greenrobot:eventbus", version.ref = "eventbus" }
@@ -38,6 +41,7 @@ room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomTesti
 room-testing = { module = "androidx.room:room-testing", version.ref = "roomTesting" }
 security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
 
 [plugins]
