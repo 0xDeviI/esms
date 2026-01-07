@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".views.main.fragments.AboutFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Secure Encrypted SMS Communication"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="eSMS is an Android application designed to enable secure and encrypted communication over SMS during periods of internet shutdowns in Iran. The project was created in response to repeated restrictions on internet access imposed on Iranian citizens, particularly during times of civil unrest and public demonstrations."
+            android:textSize="16sp"
+            android:lineSpacingExtra="8dp"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="The motivation behind eSMS is to provide a minimal yet practical communication channel when conventional internet-based messaging platforms are unavailable or blocked."
+            android:textSize="16sp"
+            android:lineSpacingExtra="8dp"
+            android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How It Works"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="eSMS encrypts messages locally using AES-256 with a user-defined secret key and sends the encrypted payload via standard SMS. If the recipient has eSMS installed, they are notified and can decrypt the message by entering the correct password.\n\nAll encryption and decryption happens on the device — no plaintext is ever transmitted."
+            android:textSize="16sp"
+            android:lineSpacingExtra="8dp"
+            android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password Sharing &amp; Limitations"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Passwords must be shared in advance through secure, offline means. eSMS is intended for small, trusted groups.\n\nNote: While message content is encrypted, SMS metadata and traffic patterns may still be visible. Encrypted messages appear as Base64 data and can be distinguished from regular SMS. Use with caution and awareness of risks."
+            android:textSize="16sp"
+            android:lineSpacingExtra="8dp"
+            android:layout_marginBottom="32dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vision"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="eSMS is a small contribution toward preserving the ability to communicate freely under restrictive conditions. It stands as a technical and ethical response to censorship and enforced disconnection."
+            android:textSize="16sp"
+            android:lineSpacingExtra="8dp"
+            android:layout_marginBottom="40dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_repo"
+            app:cornerRadius="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Source on GitHub"
+            android:backgroundTint="@color/black"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

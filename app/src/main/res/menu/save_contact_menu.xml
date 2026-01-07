@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_save_contact"
-        android:title="Save Contact"
+        android:id="@+id/action_add_phone_number"
+        android:title="Add Phone Number"
         app:showAsAction="always"
-        android:icon="@drawable/baseline_save_24"/>
+        android:icon="@drawable/outline_add_24"/>
 
 </menu>

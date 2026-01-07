@@ -80,6 +80,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         ActivityCompat.startActivity(
                 context,
                 new Intent(context, ChatActivity.class)
+                        .putExtra("from_contacts", true)
                         .putExtra("phoneNumber", phoneNumber)
                         .putExtra("name", name),
                 null

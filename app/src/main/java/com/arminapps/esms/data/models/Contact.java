@@ -20,18 +20,8 @@ public class Contact {
 
     // Getters and setters
     public void addPhoneNumber(String phoneNumber) {
-        phoneNumbers.add(getCleanPhoneNumber(phoneNumber));
-    }
-
-    private String getCleanPhoneNumber(String phoneNumber) {
-        return phoneNumber.replace(" ", "")
-                .replace("-", "");
-    }
-
-    public void addPhoneNumbers(List<String> phoneNumbers) {
-        phoneNumbers.forEach(phoneNumber -> {
-            this.phoneNumbers.add(getCleanPhoneNumber(phoneNumber));
-        });
+        if (!phoneNumbers.contains(phoneNumber))
+            phoneNumbers.add(phoneNumber);
     }
 
     public int getId() {

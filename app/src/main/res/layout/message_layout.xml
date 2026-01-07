@@ -8,39 +8,59 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-            android:elevation="3dp"
-            android:layout_margin="10dp"
-            android:visibility="gone"
-            tools:visibility="visible"
             android:id="@+id/message_received_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:background="@drawable/message_background_received"
+            android:elevation="3dp"
             android:minWidth="120dp"
             android:minHeight="80dp"
             android:orientation="vertical"
             android:padding="10dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible">
 
             <TextView
+                android:maxWidth="300dp"
                 android:id="@+id/txt_message_received"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:layout_weight="1"
-                tools:text="Hello, World!"/>
+                tools:text="Hello, World!" />
 
-            <TextView
-                android:id="@+id/txt_received_time"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:textColor="#9B9B9B"
-                android:textSize="11sp"
-                tools:text="2026/01/04-03:17 AM" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/img_encrypted_status_received"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/baseline_vpn_key_24"
+                    android:visibility="gone"
+                    app:tint="@color/white"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/txt_received_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:textColor="#9B9B9B"
+                    android:textSize="11sp"
+                    tools:text="2026/01/04 - 03:17 AM" />
+
+            </LinearLayout>
 
 
         </LinearLayout>
@@ -65,21 +85,39 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:maxWidth="300dp"
                 android:layout_weight="1"
                 android:id="@+id/txt_message_sent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                tools:text="Hello, World!" />
+                tools:text="Hello, World!"/>
 
-            <TextView
-                android:id="@+id/txt_sent_time"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray"
-                android:textSize="11sp"
-                tools:text="2026/01/04-03:17 AM" />
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:id="@+id/img_encrypted_status_sent"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/baseline_vpn_key_24"
+                    app:tint="@color/white"
+                    android:layout_marginRight="5dp"/>
+
+                <TextView
+                    android:id="@+id/txt_sent_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray"
+                    android:textSize="11sp"
+                    tools:text="2026/01/04 - 03:17 AM" />
+
+            </LinearLayout>
 
 
         </LinearLayout>

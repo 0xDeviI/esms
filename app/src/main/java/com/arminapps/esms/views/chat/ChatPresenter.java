@@ -1,10 +1,14 @@
 package com.arminapps.esms.views.chat;
 
+import android.telephony.SmsManager;
+
 import com.arminapps.esms.data.db.AppDatabase;
 import com.arminapps.esms.data.models.Conversation;
 import com.arminapps.esms.data.models.Message;
-import com.arminapps.esms.utils.SMSHelper;
+import com.arminapps.esms.utils.Crypto;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.ArrayList;
 
 public class ChatPresenter implements ChatContract.Presenter {
     private ChatActivity activity;
@@ -33,35 +37,30 @@ public class ChatPresenter implements ChatContract.Presenter {
 
     @Override
     public void sendSMS(Conversation conversation, Message message) {
+        try {
+            message.setEncrypted(!conversation.getSecurityKey().isEmpty());
 
-        SMSHelper smsHelper = new SMSHelper(activity, new SMSHelper.SMSListener() {
-            @Override
-            public void onSMSSentSuccess() {
-                showErrorDialog("SENT");
+            SmsManager smsManager = SmsManager.getDefault();
+            String finalMessage = message.getMessage();
+            if (message.isEncrypted()) {
+                finalMessage = Crypto.stampMessage(
+                        Crypto.encrypt(message.getMessage(), conversation.getSecurityKey())
+                );
             }
 
-            @Override
-            public void onSMSSentFailure(int errorCode) {
-                showErrorDialog(SMSHelper.getErrorMessage(errorCode));
+            if (finalMessage.length() > 160) {
+                ArrayList<String> parts = smsManager.divideMessage(finalMessage);
+                smsManager.sendMultipartTextMessage(conversation.getPhoneNumber(), null, parts,
+                        null, null);
+            }
+            else {
+                smsManager.sendTextMessage(conversation.getPhoneNumber(), null, finalMessage, null,null);
             }
 
-            @Override
-            public void onSMSDelivered() {
-                registerESMS(conversation, message);
-            }
-
-            @Override
-            public void onSMSNotDelivered() {
-                showErrorDialog("DIDN'T DELIVER");
-            }
-
-            @Override
-            public void onError(Exception e) {
-                showErrorDialog(e.getMessage());
-            }
-        });
-
-        smsHelper.sendSMS(conversation.getPhoneNumber(), message.getMessage());
+            registerESMS(conversation, message);
+        } catch (Exception e) {
+            showErrorDialog(e.getMessage());
+        }
     }
 
     @Override
@@ -103,22 +102,52 @@ public class ChatPresenter implements ChatContract.Presenter {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    Conversation createdConversation = new Conversation(conversation.getName(), conversation.getPhoneNumber());
+                    Conversation createdConversation = new Conversation(
+                            conversation.getName(), conversation.getPhoneNumber(),
+                            message.getMessage(), message.getTime()
+                    );
                     long conversationId = database.conversationDAO().insert(createdConversation);
                     message.setConversationId((int) conversationId);
                     long messageId = database.messageDAO().insert(message);
                     message.setId((int) messageId);
-
-                    createdConversation.setLastMessageObject(message);
-                    database.conversationDAO().update(createdConversation);
                 }
             }).start();
         }
         else {
-            database.messageDAO().insert(message);
-            conversation.setLastMessageObject(message);
-            database.conversationDAO().update(conversation);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    database.messageDAO().insert(message);
+                    conversation.setLastMessage(message.getMessage());
+                    conversation.setLastMessageTime(message.getTime());
+                    database.conversationDAO().update(conversation);
+                }
+            }).start();
         }
         view.messageSent(message);
+    }
+
+    @Override
+    public void removeConversation(Conversation conversation) {
+        if (conversation == null || conversation.getId() == -1) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                database.conversationDAO().deleteConversation(conversation);
+                activity.runOnUiThread(() -> view.conversationRemoved());
+            }
+        }).start();
+    }
+
+    @Override
+    public void setSecurityKey(Conversation conversation, String securityKey) {
+        if (conversation == null) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                database.conversationDAO().updateSecurityKey(conversation.getId(), conversation.getSecurityKey());
+                activity.runOnUiThread(() -> view.securityKeySet());
+            }
+        });
     }
 }

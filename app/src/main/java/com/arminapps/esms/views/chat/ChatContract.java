@@ -12,6 +12,9 @@ public class ChatContract {
         void setMessages(List<Message> messages);
         void loadConversation(Conversation conversation);
         void messageSent(Message message);
+        void conversationRemoved();
+        void showSecurityKeyChangingDialog(String key);
+        void securityKeySet();
     }
 
     public interface Presenter {
@@ -20,5 +23,7 @@ public class ChatContract {
         void sendSMS(Conversation conversation, Message message);
         void checkConversationExist(Conversation conversation);
         void registerESMS(Conversation conversation, Message message);
+        void removeConversation(Conversation conversation);
+        void setSecurityKey(Conversation conversation, String securityKey);
     }
 }

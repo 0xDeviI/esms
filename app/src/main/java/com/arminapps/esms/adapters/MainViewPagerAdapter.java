@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.arminapps.esms.views.main.fragments.AboutFragment;
 import com.arminapps.esms.views.main.fragments.ChatsFragment;
 import com.arminapps.esms.views.main.fragments.SettingsFragment;
 
@@ -19,6 +20,8 @@ public class MainViewPagerAdapter extends FragmentStateAdapter {
         switch (position) {
             case 1:
                 return new SettingsFragment();
+            case 2:
+                return new AboutFragment();
             default:
                 return new ChatsFragment();
         }
@@ -26,6 +29,6 @@ public class MainViewPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2;
+        return 3;
     }
 }

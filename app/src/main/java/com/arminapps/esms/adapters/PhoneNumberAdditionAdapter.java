@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.arminapps.esms.R;
 import com.arminapps.esms.databinding.AddingPhoneNumberViewBinding;
+import com.arminapps.esms.utils.PhoneNumberUtils;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class PhoneNumberAdditionAdapter extends RecyclerView.Adapter<PhoneNumber
 
             // Set current text
             String phoneNumber = phoneNumbers.get(position);
-            binding.txtPhoneNumber.setText(phoneNumber != null ? phoneNumber : "");
+            binding.txtPhoneNumber.setText(phoneNumber != null ? PhoneNumberUtils.normalizeToE164(context, phoneNumber) : "");
 
             // Set delete icon listener
             binding.phoneNumberContainer.setEndIconOnClickListener(v -> {

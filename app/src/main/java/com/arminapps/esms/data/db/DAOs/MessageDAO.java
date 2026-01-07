@@ -13,6 +13,9 @@ public interface MessageDAO {
     @Insert
     long insert(Message message);
 
-    @Query("SELECT * FROM messages WHERE conversationId = :conversationId;")
+    @Query("SELECT * FROM messages WHERE conversationId = :conversationId ORDER BY time ASC")
     List<Message> getMessagesByConversationId(int conversationId);
+
+    @Query("UPDATE messages SET seen = :seen WHERE id = :messageId")
+    void updateSeenStatus(int messageId, boolean seen);
 }

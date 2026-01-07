@@ -1,6 +1,7 @@
 package com.arminapps.esms.views.chat;
 
 import static android.Manifest.permission.SEND_SMS;
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.view.View.GONE;
@@ -9,12 +10,18 @@ import static android.view.View.VISIBLE;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -28,9 +35,16 @@ import com.arminapps.esms.adapters.ChatMessageAdapter;
 import com.arminapps.esms.data.models.Conversation;
 import com.arminapps.esms.data.models.Message;
 import com.arminapps.esms.databinding.ActivityChatBinding;
+import com.arminapps.esms.views.contacts.ContactsActivity;
 import com.arminapps.esms.views.main.MainActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,6 +106,19 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 
     @Override
     public void setup() {
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (getIntent().getBooleanExtra("from_contacts", false))
+                    startActivity(new Intent(ChatActivity.this, ContactsActivity.class)
+                            .setFlags(FLAG_ACTIVITY_CLEAR_TOP));
+                else
+                    startActivity(new Intent(ChatActivity.this, MainActivity.class)
+                            .setFlags(FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
+            }
+        });
+
         boolean conversationLoading = getIntent().getBooleanExtra("conversation_loading", false);
         String name = getIntent().getStringExtra("name");
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
@@ -105,7 +132,6 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             conversation.setId(-1);
         }
         presenter.checkConversationExist(conversation);
-
 
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
@@ -147,6 +173,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
     public void sendMessageBtnClickAction() {
         String messageText = binding.txtChatMessage.getText().toString().trim();
         if (!messageText.isEmpty()) {
+            binding.txtChatMessage.setText("");
             Message message = new Message(true, messageText, new Date().getTime(), conversation.getId());
             presenter.sendSMS(conversation, message);
         }
@@ -164,6 +191,7 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
             this.messages.clear();
             this.messages.addAll(messages);
             adapter.notifyDataSetChanged();
+            binding.chatsRecyclerView.scrollToPosition(messages.size() - 1);
         }
     }
 
@@ -177,7 +205,10 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 
     @Override
     public void messageSent(Message message) {
-        binding.txtChatMessage.setText("");
+        if (conversation.getId() == -1) {
+            Log.i("TAG", "messageSent: " + new Gson().toJson(message) + "\nconv: " + new Gson().toJson(conversation));
+            conversation.setId(message.getConversationId());
+        }
         messages.add(message);
         adapter.notifyItemInserted(messages.size() - 1);
         if (messages.isEmpty()) {
@@ -187,6 +218,92 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
         else {
             binding.chatsRecyclerView.setVisibility(VISIBLE);
             binding.viewNoMessage.setVisibility(GONE);
+            binding.chatsRecyclerView.smoothScrollToPosition(messages.size() - 1);
         }
+    }
+
+    @Override
+    public void conversationRemoved() {
+        startActivity(new Intent(ChatActivity.this, MainActivity.class)
+                .setFlags(FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_CLEAR_TASK));
+        finish();
+    }
+
+    @Subscribe
+    public void onMessageReceived(Message message) {
+        if (message.getConversationId() == conversation.getId() && conversation.getId() != -1)
+            messageSent(message);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void showSecurityKeyChangingDialog(String key) {
+        TextInputLayout textInputLayout = new TextInputLayout(this, null, com.google.android.material.R.attr.textInputStyle);
+        TextInputEditText inputEditText = new TextInputEditText(this);
+        textInputLayout.setPasswordVisibilityToggleEnabled(true);
+        inputEditText.setHint("Enter security key");
+        inputEditText.setText(key);
+        inputEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        textInputLayout.addView(inputEditText);
+
+        int padding = getResources().getDimensionPixelSize(R.dimen.password_dialog_padding);
+        textInputLayout.setPadding(padding, 0, padding, 0);
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+        builder.setView(textInputLayout)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    String securityKey = inputEditText.getText().toString().trim();
+                    conversation.setSecurityKey(securityKey);
+                    presenter.setSecurityKey(conversation, securityKey);
+                })
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void securityKeySet() {
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int itemId = item.getItemId();
+
+        if (itemId == R.id.action_change_security_key) {
+            if (conversation.getId() != -1)
+                showSecurityKeyChangingDialog(conversation.getSecurityKey());
+            return true;
+        }
+        else if (itemId == R.id.action_clear_chat) {
+            if (conversation != null || conversation.getId() != -1) {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("CAUTION")
+                        .setMessage("Do you really want to clear this conversation? There's no way to recover it later.")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                presenter.removeConversation(conversation);
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .create()
+                        .show();
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

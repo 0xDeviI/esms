@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.arminapps.esms.data.models.Contact;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -55,14 +56,14 @@ public class ContactHelper {
                                     phoneCursor.getColumnIndex(
                                             ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-                            // TODO: fix phone some multi-phone numbers won't insert (Like Mirza..)
-                            contact.addPhoneNumber(phone);
+                            contact.addPhoneNumber(PhoneNumberUtils.normalizeToE164(context, phone));
                         }
                         phoneCursor.close();
                     }
                 }
 
-                contactList.add(contact);
+                if (!contact.getPhoneNumbers().isEmpty())
+                    contactList.add(contact);
             }
             cursor.close();
         }

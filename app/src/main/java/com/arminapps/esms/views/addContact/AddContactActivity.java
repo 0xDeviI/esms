@@ -5,7 +5,6 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -27,6 +26,7 @@ import com.arminapps.esms.adapters.PhoneNumberAdditionAdapter;
 import com.arminapps.esms.data.db.AppDatabase;
 import com.arminapps.esms.data.models.Contact;
 import com.arminapps.esms.databinding.ActivityAddContactBinding;
+import com.arminapps.esms.utils.PhoneNumberUtils;
 import com.arminapps.esms.utils.SessionManager;
 import com.arminapps.esms.views.contacts.ContactsActivity;
 import com.google.android.material.snackbar.Snackbar;
@@ -75,9 +75,27 @@ public class AddContactActivity extends AppCompatActivity {
                 LinearLayoutManager.VERTICAL,
                 false
         ));
-        binding.btnNewPhoneNumber.setOnClickListener(v -> {
-            phoneNumbers.add("");
-            adapter.notifyItemInserted(phoneNumbers.size() - 1);
+        binding.btnSave.setOnClickListener(v -> {
+            if (canSave()) {
+                database = AppDatabase.getInstance(getApplicationContext());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // save in DB
+                        Contact contact = new Contact(binding.txtContactName.getText().toString());
+                        for (String phoneNumber:
+                             phoneNumbers) {
+                            contact.addPhoneNumber(PhoneNumberUtils.normalizeToE164(
+                                    getApplicationContext(), phoneNumber
+                            ));
+                        }
+                        database.contactDAO().insert(contact);
+                        startActivity(new Intent(AddContactActivity.this, ContactsActivity.class)
+                                .setFlags(FLAG_ACTIVITY_CLEAR_TOP));
+                        finish();
+                    }
+                }).start();
+            }
         });
 
         binding.txtContactName.addTextChangedListener(new TextWatcher() {
@@ -109,7 +127,7 @@ public class AddContactActivity extends AppCompatActivity {
 
     private boolean canSave() {
         if (binding.txtContactName.getText().toString().isEmpty()) {
-            Snackbar.make(binding.btnNewPhoneNumber, "Enter contact name.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(binding.getRoot(), "Enter contact name.", Snackbar.LENGTH_SHORT).show();
             return false;
         }
         boolean validPhones = true;
@@ -120,7 +138,7 @@ public class AddContactActivity extends AppCompatActivity {
                 Snackbar.make(binding.getRoot(), "Phone numbers can't be empty.", Snackbar.LENGTH_SHORT).show();
                 break;
             }
-            if (!PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
+            if (!android.telephony.PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
                 Snackbar.make(binding.getRoot(), "'" + phoneNumber + "' is invalid phone number.", Snackbar.LENGTH_SHORT).show();
                 validPhones = false;
                 break;
@@ -133,22 +151,9 @@ public class AddContactActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_save_contact) {
-            if (canSave()) {
-                database = AppDatabase.getInstance(getApplicationContext());
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // save in DB
-                        Contact contact = new Contact(binding.txtContactName.getText().toString());
-                        contact.addPhoneNumbers(phoneNumbers);
-                        database.contactDAO().insert(contact);
-                        startActivity(new Intent(AddContactActivity.this, ContactsActivity.class)
-                                .setFlags(FLAG_ACTIVITY_CLEAR_TOP));
-                        finish();
-                    }
-                }).start();
-            }
+        if (id == R.id.action_add_phone_number) {
+            phoneNumbers.add("");
+            adapter.notifyItemInserted(phoneNumbers.size() - 1);
             return true;
         }
         else if (id == android.R.id.home) {

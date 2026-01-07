@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.arminapps.esms.R;
+import com.arminapps.esms.data.db.AppDatabase;
 import com.arminapps.esms.data.models.Message;
 import com.arminapps.esms.databinding.MessageLayoutBinding;
 
@@ -23,11 +24,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
 
     private Context context;
     private List<Message> messages;
-    private final static String DATE_FORMAT = "yyyy/MM/dd-HH:mm aa";
+    private final static String DATE_FORMAT = "yyyy/MM/dd - HH:mm aa";
+    private AppDatabase database;
 
     public ChatMessageAdapter(Context context, List<Message> messages) {
         this.context = context;
         this.messages = messages;
+        this.database = AppDatabase.getInstance(context);
     }
 
     @NonNull
@@ -54,6 +57,17 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                             new Date(message.getTime())
                     )
             );
+
+            if (message.isEncrypted()) {
+                holder.binding.imgEncryptedStatusSent.setVisibility(VISIBLE);
+            }
+
+            // TODO: recheck message decryption with current key
+//            holder.binding.getRoot().setOnClickListener(v -> {
+//                if (message.isMasked()) {
+//
+//                }
+//            });
         }
         else {
             holder.binding.messageReceivedLayout.setVisibility(VISIBLE);
@@ -63,6 +77,20 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                             new Date(message.getTime())
                     )
             );
+
+            if (message.isEncrypted()) {
+                holder.binding.imgEncryptedStatusReceived.setVisibility(VISIBLE);
+            }
+        }
+
+        if (!message.isSeen()) {
+            message.setSeen(true);
+            new Thread(() -> {
+                database.messageDAO().updateSeenStatus(
+                        message.getId(),
+                        message.isSeen()
+                );
+            }).start();
         }
     }
 

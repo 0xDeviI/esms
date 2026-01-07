@@ -21,6 +21,11 @@
         <item name="background">@color/white</item>
     </style>
 
+    <style name="ToolbarSubtitleText" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="background">@color/white</item>
+    </style>
+
     <style name="Theme.Esms" parent="Base.Theme.Esms" />
 
     <style name="Theme.Esms.Splash.Base" parent="Theme.SplashScreen">

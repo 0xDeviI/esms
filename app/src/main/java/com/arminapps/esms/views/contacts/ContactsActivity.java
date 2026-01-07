@@ -2,6 +2,7 @@ package com.arminapps.esms.views.contacts;
 
 import static android.Manifest.permission.READ_CONTACTS;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -18,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -141,6 +143,10 @@ public class ContactsActivity extends AppCompatActivity {
             }
         }).start();
 
+        binding.txtSearchContainer.setEndIconOnClickListener(v -> {
+            search(binding.txtContactSearch.getText().toString().trim());
+        });
+
         binding.txtContactSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -154,7 +160,8 @@ public class ContactsActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                search(binding.txtContactSearch.getText().toString().trim());
+                if (binding.txtContactSearch.getText().toString().isEmpty())
+                    search("");
             }
         });
     }
@@ -200,7 +207,13 @@ public class ContactsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_import_contacts) {
-            requestPermissionLauncher.launch(READ_CONTACTS);
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    READ_CONTACTS
+            ) != PERMISSION_GRANTED)
+                requestPermissionLauncher.launch(READ_CONTACTS);
+            else
+                importContacts();
             return true;
         }
         else if (id == R.id.action_add_contact) {

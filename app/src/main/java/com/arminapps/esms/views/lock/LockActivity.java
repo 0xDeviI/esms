@@ -6,6 +6,7 @@ import static android.view.View.VISIBLE;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,8 +19,10 @@ import androidx.databinding.DataBindingUtil;
 import com.arminapps.esms.R;
 import com.arminapps.esms.databinding.ActivityLockBinding;
 import com.arminapps.esms.utils.SessionManager;
+import com.arminapps.esms.views.chat.ChatActivity;
 import com.arminapps.esms.views.main.MainActivity;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 
 import java.util.Date;
 
@@ -63,7 +66,16 @@ public class LockActivity extends AppCompatActivity {
         binding.txtPasscodeContainer.setEndIconOnClickListener(v -> {
             if (binding.txtPasscode.getText().toString().equals(session.getString("passcode"))) {
                 session.setInt("current_fails", -1);
-                startActivity(new Intent(LockActivity.this, MainActivity.class));
+                boolean hasToLoadChat = getIntent().getBooleanExtra("action_load_conversation", false);
+                int conversationId = getIntent().getIntExtra("conversation_id", -1);
+                if (hasToLoadChat && conversationId != -1)
+                    startActivity(
+                            new Intent(LockActivity.this, ChatActivity.class)
+                                    .putExtra("conversation_loading", true)
+                                    .putExtra("conversation_id", conversationId)
+                    );
+                else
+                    startActivity(new Intent(LockActivity.this, MainActivity.class));
                 finish();
             }
             else {

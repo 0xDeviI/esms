@@ -39,32 +39,80 @@
                         android:textSize="25sp"
                         android:gravity="center"/>
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="15dp"
-                        android:orientation="vertical">
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp">
 
-                        <TextView
-                            android:gravity="left"
-                            android:id="@+id/txt_contact_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            tools:text="Dr. James Ruff"
-                            android:textSize="18sp"
-                            android:textStyle="bold"/>
+                        <LinearLayout
+                            android:layout_width="0sp"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:gravity="left"
-                            android:id="@+id/txt_message"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            tools:text="Hello, World!"
-                            android:maxLines="1"
-                            android:textSize="13sp"/>
+                            <TextView
+                                android:id="@+id/txt_contact_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="left"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                tools:text="Dr. James Ruff" />
 
-                    </LinearLayout>
+                            <TextView
+                                android:id="@+id/txt_message"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:gravity="left"
+                                android:maxLines="1"
+                                android:textSize="13sp"
+                                tools:text="Hello, World!" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/linearLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                            <TextView
+                                android:visibility="gone"
+                                tools:visibility="visible"
+                                android:id="@+id/txt_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:textSize="7sp"
+                                tools:text="2026/01/07\n4:23 AM" />
+
+                            <TextView
+                                android:visibility="gone"
+                                tools:visibility="visible"
+                                android:id="@+id/txt_unseen_messages"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center_horizontal|right"
+                                android:layout_marginTop="10dp"
+                                android:background="@drawable/unseen_messages_background"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                android:textColor="@color/white"
+                                android:textSize="9sp"
+                                tools:text="41" />
+
+                        </LinearLayout>
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
 

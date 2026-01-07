@@ -20,6 +20,7 @@ import androidx.databinding.DataBindingUtil;
 import com.arminapps.esms.R;
 import com.arminapps.esms.adapters.MainViewPagerAdapter;
 import com.arminapps.esms.databinding.ActivityMainBinding;
+import com.arminapps.esms.utils.Notification;
 import com.arminapps.esms.views.contacts.ContactsActivity;
 import com.arminapps.esms.views.lock.LockActivity;
 import com.google.android.material.tabs.TabLayout;
@@ -53,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 1:
                     tab.setText("Settings");
+                    break;
+                case 2:
+                    tab.setText("About");
                     break;
             }
         }).attach();

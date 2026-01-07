@@ -1,22 +1,24 @@
 package com.arminapps.esms.views.setup;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.READ_SMS;
+import static android.Manifest.permission.RECEIVE_MMS;
+import static android.Manifest.permission.RECEIVE_SMS;
+import static android.Manifest.permission.SEND_SMS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -32,10 +34,14 @@ import com.arminapps.esms.databinding.ActivitySetupBinding;
 import com.arminapps.esms.utils.ContactHelper;
 import com.arminapps.esms.utils.SessionManager;
 import com.arminapps.esms.views.main.MainActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SetupActivity extends AppCompatActivity {
 
@@ -46,9 +52,10 @@ public class SetupActivity extends AppCompatActivity {
         SAVING_CONTACTS,
         FINISHING
     }
-    private final static int CONTACT_READ_REQUEST_CODE = 0x404;
     private AppDatabase database;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private ActivityResultLauncher<String> requiredPermissionLauncher;
+    private String requestedPermission = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +78,51 @@ public class SetupActivity extends AppCompatActivity {
             loading(LoadingStep.FINISHING);
         });
 
+        requiredPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (!isGranted) {
+                new MaterialAlertDialogBuilder(this)
+                        .setTitle("Necessary Permission Rejected")
+                        .setMessage(requestedPermission + " is a necessary permission eSMS requires in order to function properly.")
+                        .setPositiveButton("Grant", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                requiredPermissionLauncher.launch(requestedPermission);
+                            }
+                        })
+                        .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                System.exit(0);
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+        });
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermission(POST_NOTIFICATIONS);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermission(SEND_SMS);
+            requestPermission(READ_SMS);
+            requestPermission(RECEIVE_SMS);
+        }
+
+
+
         binding.btnPasscodeConfirm.setOnClickListener(v -> {
             if (!binding.txtPasscode.getText().toString().isEmpty())
                 loading(LoadingStep.SETTING_PASSWORD);
             else
                 Snackbar.make(binding.getRoot(), "Enter the passcode.", Snackbar.LENGTH_LONG).show();
         });
+    }
+
+    private void requestPermission(String permission) {
+        requestedPermission = permission;
+        requiredPermissionLauncher.launch(requestedPermission);
     }
 
     private void loading(LoadingStep loadingStep) {
@@ -104,6 +150,7 @@ public class SetupActivity extends AppCompatActivity {
             }
         }
         else if (loadingStep == LoadingStep.FINISHING) {
+            session.setString("my_security_key", generateRandomPassword(16));
             binding.txtLoading.setText("Finalizing initialization ...");
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -116,6 +163,38 @@ public class SetupActivity extends AppCompatActivity {
                 }
             }, 2000);
         }
+    }
+
+    public static String generateRandomPassword(int length) {
+        if (length < 1) {
+            throw new IllegalArgumentException("Password length must be at least 1");
+        }
+
+        // Define the character sets
+        String uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowercase = "abcdefghijklmnopqrstuvwxyz";
+        String digits = "0123456789";
+        String special = "!@#$%^&*()-_+=[]{}\\|;:'\",.<>/?";  // Common special characters
+
+        // Combine all characters
+        String allChars = uppercase + lowercase + digits + special;
+
+        // Convert to list for shuffling
+        List<Character> characters = allChars.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
+
+        // Shuffle for randomness
+        Collections.shuffle(characters, new SecureRandom());
+
+        // Simple version: take the first 'length' characters after shuffling
+        StringBuilder password = new StringBuilder();
+        SecureRandom random = new SecureRandom();
+        for (int i = 0; i < length; i++) {
+            password.append(allChars.charAt(random.nextInt(allChars.length())));
+        }
+
+        return password.toString();
     }
 
     private void importContacts() {

@@ -34,7 +34,14 @@ android {
 
 dependencies {
 
+    implementation libs.zxing.android.embedded
+    implementation libs.core
+    implementation libs.activity.v1122
+    implementation libs.libphonenumber
+    implementation libs.eventbus
+    implementation libs.security.crypto
     implementation libs.room.runtime
+    implementation libs.preference
     annotationProcessor libs.room.compiler
     testImplementation libs.room.testing
     implementation libs.gson

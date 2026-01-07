@@ -16,7 +16,27 @@ public class Conversation {
     private String phoneNumber;
     private String lastMessage;
     private long lastMessageTime;
+    private String securityKey = "";
+    @Ignore
+    private int unseenMessages = 0;
 
+    @Ignore
+    public Conversation(String name, String phoneNumber, String lastMessage, long lastMessageTime) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.lastMessage = lastMessage;
+        this.lastMessageTime = lastMessageTime;
+    }
+
+    public Conversation(String name, String phoneNumber, String lastMessage, long lastMessageTime, String securityKey) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.lastMessage = lastMessage;
+        this.lastMessageTime = lastMessageTime;
+        this.securityKey = securityKey;
+    }
+
+    @Ignore
     public Conversation(String name, String phoneNumber) {
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -46,6 +66,10 @@ public class Conversation {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
     }
@@ -58,16 +82,19 @@ public class Conversation {
         this.lastMessageTime = lastMessageTime;
     }
 
-    public String getLastMessage() {
-        return lastMessage;
+    public String getSecurityKey() {
+        return securityKey;
     }
 
-    public Message getLastMessageObject() {
-        return new Message(false, lastMessage, lastMessageTime, getId());
+    public void setSecurityKey(String securityKey) {
+        this.securityKey = securityKey;
     }
 
-    public void setLastMessageObject(Message lastMessage) {
-        this.lastMessage = lastMessage.getMessage();
-        this.lastMessageTime = lastMessage.getTime();
+    public int getUnseenMessages() {
+        return unseenMessages;
+    }
+
+    public void setUnseenMessages(int unseenMessages) {
+        this.unseenMessages = unseenMessages;
     }
 }

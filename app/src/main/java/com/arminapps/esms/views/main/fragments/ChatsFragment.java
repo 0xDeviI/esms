@@ -21,6 +21,8 @@ import com.arminapps.esms.adapters.ConversationAdapter;
 import com.arminapps.esms.data.db.AppDatabase;
 import com.arminapps.esms.data.models.Contact;
 import com.arminapps.esms.data.models.Conversation;
+import com.arminapps.esms.data.models.ConversationData;
+import com.arminapps.esms.data.models.NamedUnknownConversation;
 import com.arminapps.esms.databinding.FragmentChatsBinding;
 import com.google.gson.Gson;
 
@@ -31,7 +33,7 @@ public class ChatsFragment extends Fragment {
 
     private FragmentChatsBinding binding;
     private AppDatabase database;
-    private List<Conversation> conversations = new ArrayList<>();
+    private List<ConversationData> conversations = new ArrayList<>();
     private ConversationAdapter adapter;
 
     public ChatsFragment() {
@@ -46,10 +48,21 @@ public class ChatsFragment extends Fragment {
         loadChats();
     }
 
+
     private void loadChats() {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                List<NamedUnknownConversation> unknownConversations = database.conversationDAO().getNamedUnknownConversations();
+                for (NamedUnknownConversation namedUnknownConversation :
+                        unknownConversations) {
+                    database.conversationDAO().updateUnknownConversation(
+                            namedUnknownConversation.getId(),
+                            namedUnknownConversation.getContactName(),
+                            namedUnknownConversation.getPhoneNumber()
+                    );
+                }
+
                 if (adapter == null)
                     conversations = database.conversationDAO().getAllConversations();
                 else {
